@@ -7,8 +7,16 @@
 
 #include "globals.h"
 
-int main(int argc, char const *argv[])
+// declare and init global variables
+int rowno = 1;
+extern FILE * yyin;
+extern FILE * yyout;
+
+/*int main(int argc, char const *argv[])
 {
-	/* code */
+	yyin = stdin;
+	yyout = stdout;
+
+
 	return 0;
-}
+}*/

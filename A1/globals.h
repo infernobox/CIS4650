@@ -11,6 +11,21 @@
 using namespace std;
 
 #include <cstdio>
+#include <string>
+#include <iostream>
 
-enum Tags { DOC };
+enum Filters { 
+
+	/* Embedded Text */
+	WORD, NUMBER
+
+};
+
+struct TokenStruct {
+  string value;
+  int row;
+};
+
+extern int rowno;     /* input file row number */
+
 #endif
