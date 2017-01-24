@@ -17,7 +17,7 @@ using namespace std;
 enum Filters { 
 
 	/* Embedded Text */
-	WORD, NUMBER
+	WORD, NUMBER, APOS, HYPHEN, PUNC
 
 };
 
