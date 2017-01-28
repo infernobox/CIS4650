@@ -10,6 +10,7 @@
 	#include "globals.h"
 %}
 
+letter									[a-zA-z]
 real									([0-9]+"."[0-9]+)|([0-9]*"."[0-9]+)
 integer									[0-9]+
 sign									("+"|"-")?
@@ -18,7 +19,10 @@ whitespace								[ \n\t\r]+
 word									[a-zA-z0-9 \t\n\r]+
 apostrophized							({word}"'")+{word}
 hyphenated								({word}"-")+{word}
-punctuation								[!@#$%^&*()_=-]
+punctuation								[!@#$%{}\:,;?<>/^&*()_=-]
+open-tag								^("<"){1}{letter}+(">"){1}
+close-tag								^("</"){1}{letter}+(">"){1}
+
 
 %%
 
@@ -27,6 +31,8 @@ punctuation								[!@#$%^&*()_=-]
 {apostrophized}								{	cout << "Apostrophized " << yytext << endl; }
 {hyphenated}								{	cout << "Hyphenated " << yytext << endl; }
 {punctuation}								{	cout << "Punctuation " << yytext << endl; }
+{open-tag}									{	cout << "Open-Tag " << yytext << endl; }
+{close-tag}									{	cout << "Close-Tag " << yytext << endl; }
 
 
 

@@ -38,3 +38,8 @@ ASSUMPTIONS
 -------------
 
 * For cases such as HYPHENATED and APOSTROPHIZED, if the token ends in "-" or "'", the trailing character will be treated as PUNCTUATION.
+* Since WORD includes spaces, father-in-law -6 would count as HYPHENATED based on the regex.
+
+LIMITATIONS
+------------
+* Parentheses and brackets are not counted as punctuation.
