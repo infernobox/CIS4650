@@ -13,40 +13,59 @@
 %}
 
 digit           [0-9]
-number          ^(-|[+])?{digit}+(.)?{digit}+
+number          ^(-|[+])?{digit}*(.)?{digit}*
 letter          [a-zA-z]
 whitespace      [ \t]+
 newline         \n
 word            [a-zA-z0-9 \t\n]+
 punctuation     [!@#$%^&*{}()_?><:";'\.,~`|/]+
-apostrophized   {letter}+[']{1}{letter}+
-hyphenated      {letter}+[-]{1}
+apostrophized   ({letter}+([']*))+
+hyphenated      ({letter}+([-]*))+
+rel-normalized  (DOC|TEXT|P|DOCNO|DATE|HEADLINE|LENGTH)
+open-tag        ^(<){1}{letter}+(>){1}
+close-tag       ^("</"){1}{letter}+(>){1}
+
+%array yytext
 
 
 %%
 
+{open-tag}                              {
+                                            cout << "Open-tag " << yytext[0] << endl;
+                                            string str(yytext);
+                                            cout << str << endl;
+
+                                            cout << str.substr(1, str.length() - 2) << endl;
+                                            cout << str.length() << endl;
+                                        }
+
+{close-tag}                             {
+                                            cout << "Close-tag " << yytext[0] << endl;
+                                            string str(yytext);
+                                            cout << str << endl;
+
+                                            cout << str.substr(2, str.length() - 3) << endl;
+                                            cout << str.length() << endl;
+                                        }
+
 {number}                                {   
                                             cout << "Number " << yytext << endl;
-                                            return NUMBER; 
                                         }
                                         
 {word}                                  {   
                                             cout << "Word " << yytext << endl;
-                                            return WORD;
                                         }
 
-{apostrophized}                         {   cout << "Apostrophized " << yytext << endl;
-                                            return APOS;
+{apostrophized}                         {   
+                                            cout << "Apostrophized " << yytext << endl;
                                         }
 
 {hyphenated}                            {   
                                             cout << "Hyphenated " << yytext << endl;
-                                            return HYPHEN;
                                         }
 
 {punctuation}                           {
                                             cout << "Punctuation " << yytext << endl;
-                                            return PUNC;
                                         }
 
 %%

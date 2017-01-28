@@ -1,0 +1,40 @@
+CONTENTS OF THIS FILE
+----------------------
+
+* Introduction
+
+
+INTRODUCTION
+-------------
+
+This FLEX parser parses a a file written in SGML and outputs the tags of relevancy and its' embedded contents. This progam uses a global stack and a scanner in order to perform this.
+
+
+REQUIREMENTS
+-------------
+
+This program requires:
+
+	* flex
+	* gcc
+
+BUILD
+--------
+
+	1) 'cd' to the directory where the folder for this assignment exists.
+	2) type 'make' and the project should build.
+	3) 
+
+TEST PLAN
+-----------
+
+This program was tested in chunks.
+
+1) Regular expressions.
+	* As the program was being built I would test the tokens created in the *.l file for correctness. I started by writing the embedded text tokens (WORD, NUMBER, APOSTROPHIZED, HYPHENATED, PUNCTUATION).
+
+
+ASSUMPTIONS	
+-------------
+
+* For cases such as HYPHENATED and APOSTROPHIZED, if the token ends in "-" or "'", the trailing character will be treated as PUNCTUATION.

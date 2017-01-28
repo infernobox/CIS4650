@@ -15,13 +15,18 @@ integer									[0-9]+
 sign									("+"|"-")?
 number									^{sign}({real}|{integer})
 whitespace								[ \n\t\r]+
-word									[a-zA-z0-9 ,;\" \t\n\r]+
-apostrophized							{word}"'"{word}
+word									[a-zA-z0-9 \t\n\r]+
+apostrophized							({word}"'")+{word}
+hyphenated								({word}"-")+{word}
+punctuation								[!@#$%^&*()_=-]
 
 %%
-{word}										{	cout << "Word " << yytext << endl; }
+
 {number}									{	cout << "Number " << yytext << endl; }
+{word}										{	cout << "Word " << yytext << endl; }
 {apostrophized}								{	cout << "Apostrophized " << yytext << endl; }
+{hyphenated}								{	cout << "Hyphenated " << yytext << endl; }
+{punctuation}								{	cout << "Punctuation " << yytext << endl; }
 
 
 
