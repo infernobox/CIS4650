@@ -19,9 +19,9 @@ whitespace								[ \n\t\r]+
 word									[a-zA-z0-9 \t\n\r]+
 apostrophized							({word}"'")+{word}
 hyphenated								({word}"-")+{word}
-punctuation								[!@#$%{}\:,;?<>/^&*()_=-]
-open-tag								^("<"){1}{letter}+(">"){1}
-close-tag								^("</"){1}{letter}+(">"){1}
+punctuation								[!@#$%{}\:,;?></^&`~*()_=-]
+open-tag								("<"){letter}+(">")
+close-tag								("</"){1}{letter}+(">"){1}
 
 
 %%

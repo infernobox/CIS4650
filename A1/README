@@ -43,3 +43,4 @@ ASSUMPTIONS
 LIMITATIONS
 ------------
 * Parentheses and brackets are not counted as punctuation.
+* <<DOC>> or anything with punctuation before the < of a tag, everything will be looked at as PUNCTUATION and WORD.
