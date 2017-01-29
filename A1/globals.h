@@ -1,5 +1,6 @@
 /**
  * Author: Vanessa White
+ * File: globals.h
  * Class: CIS*4650 Compilers
  * Purpose: Global types and variables for the news article written in SGML
  * Date: January 2017
@@ -16,12 +17,16 @@ using namespace std;
 
 enum Filters { 
 
+	/* Book-keeping filters */
+	ENDFILE,
 	/* Embedded Text */
-	WORD, NUMBER, APOS, HYPHEN, PUNC
+	WORD, NUMBER, APOSTROPHIZED, HYPHENATED, PUNCTUATION,
 
+	/* Tag Types */
+	OPENTAG, CLOSETAG
 };
 
-struct TokenStruct {
+struct TokenStack {
   string value;
   int row;
 };

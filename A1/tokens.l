@@ -1,5 +1,6 @@
 /**
  * Author: Vanessa White
+ * File: tokens.l
  * Class: CIS*4650 Compilers
  * Purpose: Flex Specification for the news article written in SGML
  * Date: January 2017
@@ -8,6 +9,10 @@
 %{
 
 	#include "globals.h"
+	#include "util.h"
+	#include "scan.h"
+
+	struct TokenStack yylval;
 %}
 
 letter									[a-zA-z]
@@ -23,35 +28,18 @@ punctuation								[!@#$%{}\:,;?></^&`~*()_=-]
 open-tag								("<"){letter}+(">")
 close-tag								("</"){1}{letter}+(">"){1}
 
+%%
+
+{number}									{	cout << "Number " << yytext << endl; return NUMBER;}
+{word}										{	cout << "Word " << yytext << endl; return WORD; }
+{apostrophized}								{	cout << "Apostrophized " << yytext << endl; return APOSTROPHIZED; }
+{hyphenated}								{	cout << "Hyphenated " << yytext << endl; return HYPHENATED; }
+{punctuation}								{	cout << "Punctuation " << yytext << endl; return PUNCTUATION; }
+{open-tag}									{	cout << "Open-Tag " << yytext << endl; return OPENTAG; }
+{close-tag}									{	cout << "Close-Tag " << yytext << endl; return CLOSETAG; }
 
 %%
 
-{number}									{	cout << "Number " << yytext << endl; }
-{word}										{	cout << "Word " << yytext << endl; }
-{apostrophized}								{	cout << "Apostrophized " << yytext << endl; }
-{hyphenated}								{	cout << "Hyphenated " << yytext << endl; }
-{punctuation}								{	cout << "Punctuation " << yytext << endl; }
-{open-tag}									{	cout << "Open-Tag " << yytext << endl; }
-{close-tag}									{	cout << "Close-Tag " << yytext << endl; }
-
-
-
-%%
-
-main(int argc, char const *argv[]) {
-
-    FILE * f;
-    char * buffer[1024];
-
-    f = fopen(argv[1], "r");
-
-        
-    if(argc == 2 && (f = fopen(argv[1], "r")))
-    {
-        yyin = f;
-    }
-
-    yylex();
-
-    return 0;
+enum Filters getToken(void) {
+	return (enum Filters)yylex();
 }

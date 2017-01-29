@@ -9,6 +9,13 @@ INTRODUCTION
 
 This FLEX parser parses a a file written in SGML and outputs the tags of relevancy and its' embedded contents. This progam uses a global stack and a scanner in order to perform this.
 
+VERSION CONTROL
+----------------
+
+* I used GitHub for my version control. 
+GitHub Name: assenavmai
+
+NOTE: The CIS4650 repository is private.
 
 REQUIREMENTS
 -------------
