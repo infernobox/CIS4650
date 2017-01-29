@@ -35,7 +35,10 @@ close-tag								("</"){1}{letter}+(">"){1}
 {apostrophized}								{	cout << "Apostrophized " << yytext << endl; return APOSTROPHIZED; }
 {hyphenated}								{	cout << "Hyphenated " << yytext << endl; return HYPHENATED; }
 {punctuation}								{	cout << "Punctuation " << yytext << endl; return PUNCTUATION; }
-{open-tag}									{	cout << "Open-Tag " << yytext << endl; return OPENTAG; }
+{open-tag}									{	cout << "Open-Tag " << yytext << endl; 
+												yylval.row = rowno;
+												
+												return OPENTAG; }
 {close-tag}									{	cout << "Close-Tag " << yytext << endl; return CLOSETAG; }
 
 %%

@@ -23,6 +23,7 @@ int main(int argc, char const *argv[])
 
 	enum Filters tokenType;
 
+	// keep reading the file while there is tokens to read
 	while((tokenType = getToken()) != ENDFILE)
 	{
 		printToken(yyout, tokenType, yylval);
