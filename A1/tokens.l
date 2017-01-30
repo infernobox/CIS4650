@@ -13,6 +13,7 @@
 	#include "scan.h"
 
 	struct TokenStack yylval;
+	string normalized;
 %}
 
 letter									[a-zA-z]
@@ -21,7 +22,7 @@ integer									[0-9]+
 sign									("+"|"-")?
 number									^{sign}({real}|{integer})
 whitespace								[ \n\t\r]+
-word									[a-zA-z0-9 \t\n\r]+
+word									[a-zA-z0-9 \t\n]+
 apostrophized							({word}"'")+{word}
 hyphenated								({word}"-")+{word}
 punctuation								[!@#$%{}\:,;?></^&`~*()_=-]
@@ -37,7 +38,9 @@ close-tag								("</"){1}{letter}+(">"){1}
 {punctuation}								{	cout << "Punctuation " << yytext << endl; return PUNCTUATION; }
 {open-tag}									{	cout << "Open-Tag " << yytext << endl; 
 												yylval.row = rowno;
-												
+												string str(yytext);
+												normalized = str.substr(1, str.length() - 2);
+												yylval.value = normalized;
 												return OPENTAG; }
 {close-tag}									{	cout << "Close-Tag " << yytext << endl; return CLOSETAG; }
 
