@@ -22,18 +22,21 @@ real									([0-9]+"."[0-9]+)|([0-9]*"."[0-9]+)
 integer									[0-9]+
 sign									("+"|"-")?
 number									^{sign}({real}|{integer})
-whitespace								[ \n\t\r]+
-word									[a-zA-z0-9 \t\n]+
+word									[a-zA-z0-9 \t]+[^\n]$
 apostrophized							({word}"'")+{word}
 hyphenated								({word}"-")+{word}
 punctuation								[!@#$%{}\:,;?></^&`~*()_=-]
 open-tag								("<"){letter}+(">")
 close-tag								("</"){1}{letter}+(">"){1}
+whitespace								[ \t]+
+newline									\n
 
 %%
+{whitespace}								{ cout << "skipw" <<endl;}
+{newline}									{ cout << "skipn" <<endl;}
 
 {number}									{	cout << "Number " << yytext << endl; return NUMBER;}
-{word}										{	 return WORD; }
+{word}										{	 yylval.value = yytext; return WORD; }
 {apostrophized}								{	cout << "Apostrophized " << yytext << endl; return APOSTROPHIZED; }
 {hyphenated}								{	cout << "Hyphenated " << yytext << endl; return HYPHENATED; }
 {punctuation}								{	cout << "Punctuation " << yytext << endl; return PUNCTUATION; }
@@ -45,6 +48,7 @@ close-tag								("</"){1}{letter}+(">"){1}
 													yytext[i] = toupper(yytext[i]);
 													i++;
 												}
+
 												string str(yytext);
 												normalized = str.substr(1, str.length() - 2);
 												yylval.value = normalized;

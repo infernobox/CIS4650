@@ -38,6 +38,7 @@ struct GlobalStack {
 	stack<string> stck;
 };
 
+//string relevantTags[] = { "DOC"};
 extern int rowno;     /* input file row number */
 
 #endif
