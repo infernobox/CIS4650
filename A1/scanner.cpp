@@ -13,7 +13,8 @@
 int rowno = 1;
 extern FILE * yyin;
 extern FILE * yyout;
-extern TokenStack yylval;
+extern struct TokenStack yylval;
+extern struct GlobalStack gStack;
 
 
 int main(int argc, char const *argv[])
@@ -26,7 +27,7 @@ int main(int argc, char const *argv[])
 	// keep reading the file while there is tokens to read
 	while((tokenType = getToken()) != ENDFILE)
 	{
-		printToken(yyout, tokenType, yylval);
+		printToken(yyout, tokenType, yylval, gStack);
 	}
 	return 0;
 }

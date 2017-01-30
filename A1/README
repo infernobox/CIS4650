@@ -39,6 +39,8 @@ This program was tested in chunks.
 
 1) Regular expressions.
 	* As the program was being built I would test the tokens created in the *.l file for correctness. I started by writing the embedded text tokens (WORD, NUMBER, APOSTROPHIZED, HYPHENATED, PUNCTUATION).
+2) util.cpp
+	each conditional...
 
 
 ASSUMPTIONS	

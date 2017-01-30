@@ -13,6 +13,7 @@
 	#include "scan.h"
 
 	struct TokenStack yylval;
+	struct GlobalStack gStack;
 	string normalized;
 %}
 
@@ -32,17 +33,35 @@ close-tag								("</"){1}{letter}+(">"){1}
 %%
 
 {number}									{	cout << "Number " << yytext << endl; return NUMBER;}
-{word}										{	cout << "Word " << yytext << endl; return WORD; }
+{word}										{	 return WORD; }
 {apostrophized}								{	cout << "Apostrophized " << yytext << endl; return APOSTROPHIZED; }
 {hyphenated}								{	cout << "Hyphenated " << yytext << endl; return HYPHENATED; }
 {punctuation}								{	cout << "Punctuation " << yytext << endl; return PUNCTUATION; }
-{open-tag}									{	cout << "Open-Tag " << yytext << endl; 
-												yylval.row = rowno;
+{open-tag}									{	
+												
+												int i = 0;
+												while(yytext[i])
+												{
+													yytext[i] = toupper(yytext[i]);
+													i++;
+												}
 												string str(yytext);
 												normalized = str.substr(1, str.length() - 2);
 												yylval.value = normalized;
-												return OPENTAG; }
-{close-tag}									{	cout << "Close-Tag " << yytext << endl; return CLOSETAG; }
+												gStack.stck.push(normalized);
+												return OPENTAG; 
+											}
+{close-tag}									{	 
+												int i = 0;
+												while(yytext[i])
+												{
+													yytext[i] = toupper(yytext[i]);
+													i++;
+												}
+												string str(yytext);
+												normalized = str.substr(2, str.length() - 3);
+												yylval.value = normalized;
+												return CLOSETAG; }
 
 %%
 

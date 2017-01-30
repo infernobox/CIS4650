@@ -15,6 +15,7 @@ using namespace std;
 #include <string>
 #include <iostream>
 #include <cctype>
+#include <stack>
 
 enum Filters { 
 
@@ -30,6 +31,11 @@ enum Filters {
 struct TokenStack {
   string value;
   int row;
+};
+
+struct GlobalStack {
+
+	stack<string> stck;
 };
 
 extern int rowno;     /* input file row number */
