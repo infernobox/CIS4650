@@ -42,6 +42,8 @@ This program was tested in chunks.
 2) util.cpp
 	each conditional...
 3) removing one irrelevant close tag..caused output to halt. want it to continue to filter.
+4) each case in checklist
+5) filtering down the lisr
 
 
 ASSUMPTIONS	
