@@ -59,11 +59,17 @@ whitespace								[ \t\n]+
 												}
 											}
 {word}										{	
-												cout << "WORDS(" << yytext << ")" << endl;}
-{number}									{	cout << "numbers " << yytext << endl; }
-{apostrophized}								{	cout << "apostrophized " << yytext << endl; }
-{hyphenated}								{ 	cout << "hyphenated " << yytext << endl; }
-{punctuation}								{	cout << "punctuation " << yytext << endl; }
+												cout << "*WORDS(" << yytext << ")" << endl;}
+{number}									{	
+												cout << "*NUMBER(" << yytext << ")" << endl; 
+											}
+{apostrophized}								{	
+												cout << "*APOSTROPHIZED(" << yytext << ")" << endl; 
+											}
+{hyphenated}								{ 	
+												cout << "*HYPHENATED(" << yytext << ")"<< endl; 
+											}
+{punctuation}								{	cout << "*PUNCTUATION(" << yytext << ")" << endl; }
 {whitespace}								{}
 
 %%
