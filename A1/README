@@ -41,6 +41,7 @@ This program was tested in chunks.
 	* As the program was being built I would test the tokens created in the *.l file for correctness. I started by writing the embedded text tokens (WORD, NUMBER, APOSTROPHIZED, HYPHENATED, PUNCTUATION).
 2) util.cpp
 	each conditional...
+3) removing one irrelevant close tag..caused output to halt. want it to continue to filter.
 
 
 ASSUMPTIONS	
@@ -48,6 +49,9 @@ ASSUMPTIONS
 
 * For cases such as HYPHENATED and APOSTROPHIZED, if the token ends in "-" or "'", the trailing character will be treated as PUNCTUATION.
 * Since WORD includes spaces, father-in-law -6 would count as HYPHENATED based on the regex.
+* Outputting errors at the end of input: Only RELEVANT TAGS are required to be outputted.
+* Assumed that the -std=c++0x flag could be used for compilation.
+* Only the unmatched open tags are outputted for errors.
 
 LIMITATIONS
 ------------

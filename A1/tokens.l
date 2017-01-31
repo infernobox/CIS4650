@@ -32,8 +32,10 @@ whitespace								[ \t]+
 newline									\n
 
 %%
-{whitespace}								{ cout << "skipw" <<endl;}
-{newline}									{ cout << "skipn" <<endl;}
+{whitespace}								{ //cout << "skipw" <<endl;
+}
+{newline}									{ //cout << "skipn" <<endl;
+}
 
 {number}									{	cout << "Number " << yytext << endl; return NUMBER;}
 {word}										{	 yylval.value = yytext; return WORD; }
