@@ -58,7 +58,8 @@ whitespace								[ \t\n]+
 													cout << "*CLOSE-" << normalizedText << endl; 
 												}
 											}
-{word}										{	cout << "words " << yytext << endl;}
+{word}										{	
+												cout << "WORDS(" << yytext << ")" << endl;}
 {number}									{	cout << "numbers " << yytext << endl; }
 {apostrophized}								{	cout << "apostrophized " << yytext << endl; }
 {hyphenated}								{ 	cout << "hyphenated " << yytext << endl; }
