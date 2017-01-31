@@ -19,32 +19,23 @@
 
 letter									[a-zA-z]
 real									([0-9]+"."[0-9]+)|([0-9]*"."[0-9]+)
-integer									[0-9]+
+digit									[0-9]
 sign									("+"|"-")?
-number									^{sign}({real}|{integer})
-word									[a-zA-z0-9 \t]+[^\n]$
-apostrophized							({word}"'")+{word}
-hyphenated								({word}"-")+{word}
-punctuation								[!@#$%{}\:,;?></^&`~*()_=-]
-open-tag								("<"){letter}+(">")
-close-tag								("</"){1}{letter}+(">"){1}
-whitespace								[ \t]+
-newline									\n
+open-tag								("<")[a-zA-z0-9=\" ]+(">")
+close-tag								("</"){1}[a-zA-z0-9 ]+(">"){1}
+word									({digit}*{letter}+{digit}*)+
+number									(^{sign}{real}|^{sign}{digit}+|{digit}+|{real})
+apostrophized							({word}("'"){1})+{word}
+hyphenated								({word}("-"){1})+{word}
+punctuation								[!@#$%{}\:,;?></^&`~*()_='-]
+
+whitespace								[ \t\n]+
 
 %%
-{whitespace}								{ //cout << "skipw" <<endl;
-}
-{newline}									{ //cout << "skipn" <<endl;
-}
 
-{number}									{	cout << "Number " << yytext << endl; return NUMBER;}
-{word}										{	 yylval.value = yytext; return WORD; }
-{apostrophized}								{	cout << "Apostrophized " << yytext << endl; return APOSTROPHIZED; }
-{hyphenated}								{	cout << "Hyphenated " << yytext << endl; return HYPHENATED; }
-{punctuation}								{	cout << "Punctuation " << yytext << endl; return PUNCTUATION; }
 {open-tag}									{	
-												
-												int i = 0;
+												cout << "Open tag " << yytext << endl;
+												/*int i = 0;
 												while(yytext[i])
 												{
 													yytext[i] = toupper(yytext[i]);
@@ -55,22 +46,36 @@ newline									\n
 												normalized = str.substr(1, str.length() - 2);
 												yylval.value = normalized;
 												gStack.stck.push(normalized);
-												return OPENTAG; 
+												return OPENTAG; */
 											}
-{close-tag}									{	 
-												int i = 0;
-												while(yytext[i])
-												{
-													yytext[i] = toupper(yytext[i]);
-													i++;
-												}
-												string str(yytext);
-												normalized = str.substr(2, str.length() - 3);
-												yylval.value = normalized;
-												return CLOSETAG; }
+{close-tag}									{ 	cout << "Close tag " << yytext << endl; }
+{word}										{	cout << "words " << yytext << endl;}
+{number}									{	cout << "numbers " << yytext << endl; }
+{apostrophized}								{	cout << "apostrophized " << yytext << endl; }
+{hyphenated}								{ 	cout << "hyphenated " << yytext << endl; }
+{punctuation}								{	cout << "punctuation " << yytext << endl; }
+{whitespace}								{}
 
 %%
 
 enum Filters getToken(void) {
 	return (enum Filters)yylex();
+}
+
+main(int argc, char const *argv[]) {
+
+    FILE * f;
+    char * buffer[1024];
+
+    f = fopen(argv[1], "r");
+
+        
+    if(argc == 2 && (f = fopen(argv[1], "r")))
+    {
+        yyin = f;
+    }
+
+    yylex();
+
+    return 0;
 }

@@ -47,28 +47,25 @@ void printToken(FILE * f, enum Filters token, struct TokenStack &tokenStack, str
 					might have the case where the open tag does not have a matching close tag
 					then it halts output on the correct close-tag
 				*/
-				//while(!poppedMatch) 
-				//{
-					if(normalizedStack.top().compare(tokenStack.value) == 0)
+				if(normalizedStack.top().compare(tokenStack.value) == 0)
+				{
+					//cout << "MATCHING OPEN & CLOSE TAG" << endl;
+					cout << "*CLOSE-" << tokenStack.value << endl;
+					normalizedStack.pop();
+					poppedMatch = true;
+				}
+				else
+				{
+					/* Have to add them to some sort of error check to display at the end of input */
+					if(checkRelevancy(normalizedStack.top()))
 					{
-						//cout << "MATCHING OPEN & CLOSE TAG" << endl;
-						cout << "*CLOSE-" << tokenStack.value << endl;
-						normalizedStack.pop();
-						poppedMatch = true;
+						noMatch.push(normalizedStack.top());
 					}
 					else
 					{
-						/* Have to add them to some sort of error check to display at the end of input */
-						if(checkRelevancy(normalizedStack.top()))
-						{
-							noMatch.push(normalizedStack.top());
-						}
-						else
-						{
-							normalizedStack.pop();
-						}
+						normalizedStack.pop();
 					}
-				//}
+				}
 			}
 			else
 			{
@@ -85,11 +82,17 @@ void printToken(FILE * f, enum Filters token, struct TokenStack &tokenStack, str
 			break;
 	}
 
-	while(!noMatch.empty())
+	/*while(!noMatch.empty())
 	{
 		cout << "error: no matching closing-tag for <" << noMatch.top() << ">" << endl;
 		noMatch.pop();
 	}
+
+	for(int i  = 0; i < normalizedStack.size(); i++)
+	{
+		cout << "error: no matching closing-tag for <" << normalizedStack.top() << ">" << endl;
+		normalizedStack.pop();
+	}*/
 }
 
 bool checkRelevancy(string token) {

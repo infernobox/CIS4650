@@ -17,7 +17,7 @@ extern struct TokenStack yylval;
 extern struct GlobalStack gStack;
 
 
-int main(int argc, char const *argv[])
+/*int main(int argc, char const *argv[])
 {
 	yyin = stdin;
 	yyout = stdout;
@@ -30,4 +30,4 @@ int main(int argc, char const *argv[])
 		printToken(yyout, tokenType, yylval, gStack);
 	}
 	return 0;
-}
+}*/
