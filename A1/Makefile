@@ -2,7 +2,7 @@
 # Makefile for news article language in SGML
 #
 
-CC = g++
+CC = g++ -std=c++0x
 
 CFLAGS =
 

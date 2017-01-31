@@ -16,6 +16,7 @@ using namespace std;
 #include <iostream>
 #include <cctype>
 #include <stack>
+#include <array>
 
 enum Filters { 
 
@@ -38,7 +39,6 @@ struct GlobalStack {
 	stack<string> stck;
 };
 
-//string relevantTags[] = { "DOC"};
 extern int rowno;     /* input file row number */
 
 #endif
