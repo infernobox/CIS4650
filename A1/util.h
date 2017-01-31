@@ -14,5 +14,7 @@
 //Prints the token and outputs it to a file
 void printToken( FILE *, enum Filters, struct TokenStack &, struct GlobalStack &);
 bool checkRelevancy(string token);
+char * toUpperCase(char * str);
+string parseTag(char * tag);
 
 #endif

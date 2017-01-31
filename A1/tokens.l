@@ -13,8 +13,10 @@
 	#include "scan.h"
 
 	struct TokenStack yylval;
-	struct GlobalStack gStack;
-	string normalized;
+	string normalizedText;
+	stack<string> normalizedStack;
+	bool relevant = false;
+	array<string, 7> relevantTags = { "DOC", "TEXT", "P", "DOCNO", "DATE", "HEADLINE", "LENGTH"};
 %}
 
 letter									[a-zA-z]
@@ -33,22 +35,29 @@ whitespace								[ \t\n]+
 
 %%
 
-{open-tag}									{	
-												cout << "Open tag " << yytext << endl;
-												/*int i = 0;
-												while(yytext[i])
-												{
-													yytext[i] = toupper(yytext[i]);
-													i++;
-												}
+{open-tag}									{
+												yytext = toUpperCase(yytext);
+												normalizedText = parseTag(yytext);
+												cout << normalizedText << endl;
+												relevant = checkRelevancy(normalizedText);
 
-												string str(yytext);
-												normalized = str.substr(1, str.length() - 2);
-												yylval.value = normalized;
-												gStack.stck.push(normalized);
-												return OPENTAG; */
+												if(relevant)
+												{
+													cout << "*OPEN-" << normalizedText << endl;
+												}
 											}
-{close-tag}									{ 	cout << "Close tag " << yytext << endl; }
+{close-tag}									{ 	
+												yytext = toUpperCase(yytext);
+												normalizedText = parseTag(yytext);
+												cout << normalizedText << endl;
+
+												relevant = checkRelevancy(normalizedText);
+
+												if(relevant)
+												{
+													cout << "*CLOSE-" << normalizedText << endl; 
+												}
+											}
 {word}										{	cout << "words " << yytext << endl;}
 {number}									{	cout << "numbers " << yytext << endl; }
 {apostrophized}								{	cout << "apostrophized " << yytext << endl; }
@@ -60,6 +69,54 @@ whitespace								[ \t\n]+
 
 enum Filters getToken(void) {
 	return (enum Filters)yylex();
+}
+
+bool checkRelevancy(string token) {
+
+	cout << "checkRelevancy" << token << endl;
+
+	for(int i = 0; i < relevantTags.size(); i++)
+	{
+		if(token.compare(relevantTags.at(i)) == 0)
+		{
+			cout << "rele " << relevantTags.at(i) << endl;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+char * toUpperCase(char * str) {
+
+	int i = 0;
+	while(str[i])
+	{
+		str[i] = toupper(str[i]);
+		i++;
+	}
+
+	return str;
+}
+
+string parseTag(char * tag) {
+
+	string str(tag);
+	string normalized;
+
+	string::iterator it;
+
+	for(it = str.begin(); it != str.end(); ++it)
+	{
+		if(isalnum(*it))
+		{
+			normalized = normalized + *it;
+		}
+	}
+
+	//normalized = str.substr(1, str.length() - 2);
+
+	return normalized;
 }
 
 main(int argc, char const *argv[]) {
