@@ -28,7 +28,7 @@ word                                    ({digit}*{letter}+{digit}*)+
 number                                  (^{sign}{real}|^{sign}{digit}+|{digit}+|{real})
 apostrophized                           ({word}("'"){1})+{word}
 hyphenated                              ({word}("-"){1})+{word}
-punctuation                             [!@#$%{}\:,;?></^&`~*()_='-]
+punctuation                             [!@#$%{}\:.,;?></^&`~*()_='-]
 
 whitespace                              [ \t\n]+
 
@@ -45,7 +45,7 @@ whitespace                              [ \t\n]+
                                                     cout << "*OPEN-" << normalizedText << endl;
                                                 }
                                                 normalizedStack.push(normalizedText);
-
+                                                cout << "\t\t\tNormalizedOPen: " << normalizedStack.top() << endl;
                                             }
 {close-tag}                                 {   
                                                 yytext = toUpperCase(yytext);
@@ -54,7 +54,7 @@ whitespace                              [ \t\n]+
 
                                                 // Check that the closing tag and open tag match 
                                                 //If they do, pop it off the stack. Else it is an error
-                                                if(normalizedStack.top().compare(normalizedText))
+                                                if(normalizedStack.top().compare(normalizedText) == 0)
                                                 {
                                                     cout << "Match found" << endl;
                                                     normalizedStack.pop();
@@ -67,10 +67,10 @@ whitespace                              [ \t\n]+
                                                 }
                                             }
 {word}                                      {  
-                                                cout << normalizedStack.top() << " word" << endl;
+                                                //cout << normalizedStack.top() << " word" << endl;
                                                 if(checkRelevancy(normalizedStack.top()))
                                                 {
-                                                    cout << "*WORDS(" << yytext << ")" << endl;
+                                                    cout << "*WORD(" << yytext << ")" << endl;
                                                 }
                                             }
 {number}                                    {   
@@ -95,7 +95,7 @@ whitespace                              [ \t\n]+
 {punctuation}                               {   
                                                 if(checkRelevancy(normalizedStack.top()))
                                                 {
-                                                    cout << "*WORDS(" << yytext << ")" << endl;
+                                                    cout << "*PUNCTUATION(" << yytext << ")" << endl;
                                                 }
                                             }
 {whitespace}                                {   /* skip whitespace*/ }
