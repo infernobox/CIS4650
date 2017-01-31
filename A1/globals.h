@@ -34,11 +34,6 @@ struct TokenStack {
   int row;
 };
 
-struct GlobalStack {
-
-	stack<string> stck;
-};
-
 extern int rowno;     /* input file row number */
 
 #endif

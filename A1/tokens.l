@@ -12,7 +12,6 @@
     #include "util.h"
     #include "scan.h"
 
-    struct TokenStack yylval;
     string normalizedText;
     stack<string> normalizedStack;
     bool relevant = false;
@@ -50,27 +49,25 @@ whitespace                              [ \t\n]+
                                             }
 {close-tag}                                 {   
                                                 yytext = toUpperCase(yytext);
-                                                //normalizedText = parseTag(yytext);
-                                                cout << normalizedText << endl;
+                                                normalizedText = parseTag(yytext);
+                                                cout <<  "close " << normalizedText << " " << normalizedStack.top() << endl;
 
-                                                relevant = checkRelevancy(normalizedText);
-
+                                                // Check that the closing tag and open tag match 
+                                                //If they do, pop it off the stack. Else it is an error
                                                 if(normalizedStack.top().compare(normalizedText))
                                                 {
                                                     cout << "Match found" << endl;
                                                     normalizedStack.pop();
                                                 }
+                                                relevant = checkRelevancy(normalizedText);
 
-                                               /* if(relevant)
+                                                if(relevant)
                                                 {
                                                     cout << "*CLOSE-" << normalizedText << endl; 
                                                 }
-                                                else
-                                                {
-                                                    normalizedStack.pop();
-                                                }*/
                                             }
-{word}                                      {   
+{word}                                      {  
+                                                cout << normalizedStack.top() << " word" << endl;
                                                 if(checkRelevancy(normalizedStack.top()))
                                                 {
                                                     cout << "*WORDS(" << yytext << ")" << endl;
@@ -101,7 +98,7 @@ whitespace                              [ \t\n]+
                                                     cout << "*WORDS(" << yytext << ")" << endl;
                                                 }
                                             }
-{whitespace}                                {}
+{whitespace}                                {   /* skip whitespace*/ }
 
 %%
 
@@ -109,6 +106,10 @@ enum Filters getToken(void) {
     return (enum Filters)yylex();
 }
 
+/* Checks if the tag is relevant 
+    Returns true if it is
+    Returns false is the tag is irrelevant
+*/
 bool checkRelevancy(string token) {
 
     //cout << "checkRelevancy" << token << endl;
@@ -125,6 +126,9 @@ bool checkRelevancy(string token) {
     return false;
 }
 
+/* Converts lowercase string to all upper case
+    Returns the string in uppercase
+*/
 char * toUpperCase(char * str) {
 
     int i = 0;
@@ -137,12 +141,16 @@ char * toUpperCase(char * str) {
     return str;
 }
 
+/* Parses the OPEN-TAG and CLOSE-TAG to remove th '<', '>' and '/'
+    Allows the normalized text to be extracted
+    Return the string containing the normalized text
+*/
 string parseTag(char * tag) {
 
     string str(tag);
     string normalized;
 
-    string::iterator it;
+    string::iterator it; //an iterator to traverse through the string
 
     for(it = str.begin(); it != str.end(); ++it)
     {
