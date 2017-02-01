@@ -13,8 +13,9 @@
     #include "scan.h"
 
     string normalizedText;
-    stack<string> normalizedStack;
+    vector<string> normalizedStack;
     bool relevant = false;
+    bool isOutputted = false;
     array<string, 7> relevantTags = { "DOC", "TEXT", "P", "DOCNO", "DATE", "HEADLINE", "LENGTH"};
 %}
 
@@ -37,63 +38,70 @@ whitespace                              [ \t\n]+
 {open-tag}                                  {
                                                 yytext = toUpperCase(yytext);
                                                 normalizedText = parseTag(yytext);
-                                                //cout << normalizedText << endl;
                                                 relevant = checkRelevancy(normalizedText);
-
-                                                if(relevant)
+                                                isOutputted = toOutput();
+                                                cout << "Open " << isOutputted << endl;
+                                                if(relevant && isOutputted)
                                                 {
                                                     cout << "*OPEN-" << normalizedText << endl;
                                                 }
-                                                normalizedStack.push(normalizedText);
-                                                cout << "\t\t\tNormalizedOPen: " << normalizedStack.top() << endl;
+                                                cout << "\t\tNormalized " << normalizedText << endl;
+                                                normalizedStack.push_back(normalizedText);
                                             }
 {close-tag}                                 {   
+                                                cout << "\t\t\t\tclose tag" << endl;
                                                 yytext = toUpperCase(yytext);
+                                                cout << "\t\t\t\tparsetag" << endl;
                                                 normalizedText = parseTag(yytext);
-                                                cout <<  "close " << normalizedText << " " << normalizedStack.top() << endl;
-
+                                                cout << "pls" << endl;
+                                                //cout <<  "close " << normalizedText << " " << normalizedStack.back() << endl;
                                                 // Check that the closing tag and open tag match 
                                                 //If they do, pop it off the stack. Else it is an error
-                                                if(normalizedStack.top().compare(normalizedText) == 0)
+                                                if(!normalizedStack.empty() && normalizedStack.back().compare(normalizedText) == 0)
                                                 {
                                                     cout << "Match found" << endl;
-                                                    normalizedStack.pop();
+                                                    normalizedStack.pop_back();
                                                 }
                                                 relevant = checkRelevancy(normalizedText);
-
-                                                if(relevant)
+                                                isOutputted = toOutput();
+                                                if(relevant && isOutputted)
                                                 {
                                                     cout << "*CLOSE-" << normalizedText << endl; 
                                                 }
                                             }
 {word}                                      {  
                                                 //cout << normalizedStack.top() << " word" << endl;
-                                                if(checkRelevancy(normalizedStack.top()))
+                                                isOutputted = toOutput();
+                                                if(!normalizedStack.empty() && checkRelevancy(normalizedStack.back()) && isOutputted)
                                                 {
                                                     cout << "*WORD(" << yytext << ")" << endl;
                                                 }
                                             }
 {number}                                    {   
-                                                if(checkRelevancy(normalizedStack.top()))
+                                                isOutputted = toOutput();
+                                                if(!normalizedStack.empty() && checkRelevancy(normalizedStack.back()) && isOutputted)
                                                 {
                                                     cout << "*NUMBER(" << yytext << ")" << endl;
                                                 }
                                             }
                                             
 {apostrophized}                             {   
-                                                if(checkRelevancy(normalizedStack.top()))
+                                                isOutputted = toOutput();
+                                                if(!normalizedStack.empty() && checkRelevancy(normalizedStack.back()) && isOutputted)
                                                 {
                                                     cout << "*APOSTROPHIZED(" << yytext << ")" << endl;
                                                 }
                                             }
 {hyphenated}                                {   
-                                                if(checkRelevancy(normalizedStack.top()))
+                                                isOutputted = toOutput();
+                                                if(!normalizedStack.empty() && checkRelevancy(normalizedStack.back()) && isOutputted)
                                                 {
                                                     cout << "*HYPHENATED(" << yytext << ")" << endl;
                                                 }
                                             }
-{punctuation}                               {   
-                                                if(checkRelevancy(normalizedStack.top()))
+{punctuation}                               {  
+                                                isOutputted = toOutput(); 
+                                                if(!normalizedStack.empty() && checkRelevancy(normalizedStack.back()) && isOutputted)
                                                 {
                                                     cout << "*PUNCTUATION(" << yytext << ")" << endl;
                                                 }
@@ -114,7 +122,7 @@ bool checkRelevancy(string token) {
 
     //cout << "checkRelevancy" << token << endl;
 
-    for(int i = 0; i < relevantTags.size(); i++)
+    for(int i = 0; i < relevantTags.size(); ++i)
     {
         if(token.compare(relevantTags.at(i)) == 0)
         {
@@ -124,6 +132,66 @@ bool checkRelevancy(string token) {
     }
 
     return false;
+}
+
+/* Checks that the stack has either all relevant or all irrelevant tags in it 
+    Returns false if an irrelevant tag is in the stack
+    Else returns true
+*/
+bool toOutput() {
+    vector<string>::iterator it;
+    bool found = false;
+
+    for(it = normalizedStack.begin(); it != normalizedStack.end(); ++it)
+    {
+        found = false;
+
+        for(int i = 0; i < relevantTags.size(); ++i)
+        {
+          //  cout << relevantTags.at(i) << " " << *it << endl;
+            if(relevantTags.at(i).compare(*it) == 0)
+            {
+                found = true;
+                break;
+            }
+
+            if(!found && i == relevantTags.size() - 1)
+            {
+                return false;
+            }
+
+        }
+    }
+
+    /*if(normalizedStack.empty())
+    {
+        return true;
+    }
+
+    for(it = normalizedStack.begin(); it != normalizedStack.end(); ++it)
+    {
+        found = false;
+
+        for(int i = 0; i < relevantTags.size(); ++i)
+        {
+          //  cout << relevantTags.at(i) << " " << *it << endl;
+            if(relevantTags.at(i).compare(*it) == 0)
+            {
+                found = true;
+                break;
+            }
+
+        }
+    }
+
+    if(!found)
+    {
+        return false;
+    }*/
+
+
+
+    return true;
 }
 
 /* Converts lowercase string to all upper case

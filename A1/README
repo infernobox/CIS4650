@@ -54,8 +54,9 @@ ASSUMPTIONS
 * Outputting errors at the end of input: Only RELEVANT TAGS are required to be outputted.
 * Assumed that the -std=c++0x flag could be used for compilation.
 * Only the unmatched open tags are outputted for errors.
-* Only case that needs to be checked for CLOSE-TAGS are that they do not have a corresponding open tag
-* Relevant tags can wrap irrelevant tags, but irrelevant tags cannot wrap relevant tags
+* Only case that needs to be checked for CLOSE-TAGS are that they do not have a corresponding open tag.
+* Relevant tags can wrap irrelevant tags, but irrelevant tags cannot wrap relevant tags.
+* If the global stack is empty, then nothing will be outputted since there are no tags.
 
 LIMITATIONS
 ------------

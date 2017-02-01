@@ -17,6 +17,7 @@ using namespace std;
 #include <cctype>
 #include <stack>
 #include <array>
+#include <vector>
 
 enum Filters { 
 
