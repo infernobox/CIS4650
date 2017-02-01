@@ -41,12 +41,13 @@ whitespace                              [ \t\n]+
                                                 relevant = checkRelevancy(normalizedText);
                                                 isOutputted = toOutput();
                                                 cout << "Open " << isOutputted << endl;
+                                                normalizedStack.push_back(normalizedText);
                                                 if(relevant && isOutputted)
                                                 {
                                                     cout << "*OPEN-" << normalizedText << endl;
+                                                    //return OPENTAG;
                                                 }
                                                 cout << "\t\tNormalized " << normalizedText << endl;
-                                                normalizedStack.push_back(normalizedText);
                                             }
 {close-tag}                                 {   
                                                 cout << "\t\t\t\tclose tag" << endl;
@@ -61,13 +62,15 @@ whitespace                              [ \t\n]+
                                                 {
                                                     cout << "Match found" << endl;
                                                     normalizedStack.pop_back();
+
+                                                    relevant = checkRelevancy(normalizedText);
+                                                    isOutputted = toOutput();
+                                                    if(relevant && isOutputted)
+                                                    {
+                                                        cout << "*CLOSE-" << normalizedText << endl; 
+                                                    }
                                                 }
-                                                relevant = checkRelevancy(normalizedText);
-                                                isOutputted = toOutput();
-                                                if(relevant && isOutputted)
-                                                {
-                                                    cout << "*CLOSE-" << normalizedText << endl; 
-                                                }
+                                               
                                             }
 {word}                                      {  
                                                 //cout << normalizedStack.top() << " word" << endl;

@@ -12,7 +12,12 @@
 
 using namespace std;
 
-/*stack<string> normalizedStack;
-stack<string> noMatch;
-array<string, 7> relevantTags = { "DOC", "TEXT", "P", "DOCNO", "DATE", "HEADLINE", "LENGTH"};*/
+void printToken( FILE * f, enum Filters token) {
+
+	/*switch(token) 
+	{
+		case OPENTAG:
+			cout << "OPEN-" << normalizedStack.
+	}*/
+}
 
