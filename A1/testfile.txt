@@ -1,0 +1,16 @@
+<doc>
+
+<p>
+hello
++34
+.6
+123abc
+LA010190-0001
+father-in-law's
+</p>
+
+<headline>
+<date>
+
+</p>
+</doc>

@@ -62,6 +62,7 @@ ASSUMPTIONS
 * If the global stack is empty, then nothing will be outputted since there are no tags.
 * If the closing tag is unmatched, then the previous valid input will be outputted and just an error will be outputted.
     * If it is wrapped with irrelevant tags, the error will not be outputted.
+* Unmatched open tags which are outputted at the end of input can include irrelevant tags
 
 
 LIMITATIONS
@@ -72,14 +73,235 @@ LIMITATIONS
 TEST PLAN
 -----------
 
+Format: {Test No} [ Test Data ] => [ Expected Result ] : [ Actual Result ]  [ Pass/Fail ]
+
+1) Testing Regular Expressions
+
+Open tags and token sequence:
+
+    {T1} [ < doc > ] => [ OPEN-DOC ]    :   [ OPEN-DOC ]            [Pass]
+    {T2} [ <doc>  ]  => [ OPEN-DOC ]    :   [ OPEN-DOC ]            [Pass]
+    {T3} [ < TeXt> ]  => [ OPEN-TEXT ]    :   [ OPEN-TEXT ]            [Pass]
+    {T4} [ <P > ]  => [ OPEN-P ]    :   [ OPEN-P ]            [Pass]
+    {T5} [ < doc  ]  => [ PUNCTUATION(<):   [ same as expected]     [Pass]
+                          WORD(doc) ]         
+    {T6} [ <h1>   ]  => [ OPEN-TAG ]    :   [ OPEN-TAG ]            [Pass]
+    {T7} [<DOC align="left"] => [OPEN-DOC] : [DOCALIGNLEFT]         [Fail]
+
+Close tags and token sequence:
+    {T1} [ </ headline > ]   =>  [ CLOSE-headline ]  :   [ CLOSE-headline ] [Pass]
+    {T2} [ </ doc> ]    =>  [ CLOSE-DOC ]       :   [ CLOSE-DOC ]           [Pass]
+    {T3} [ < / doc > ]  =>  [ PUNCTUATION(<)    :   [ same as expected  ]   [Pass]
+                              PUNCTUATION(/)
+                              WORD(doc)
+                              PUNCTUATION(>) ]
+    {T4} [ </ h1> ]    =>    [ CLOSE-TAG ]      :   [ CLOSE-TAG ]           [Pass]
+
+Word:
+    {T1} [ Hello ]      =>  [WORD(Hello)]   :   [WORD(Hello)]      [Pass]
+    {T2} [ 123abc ]     =>  [WORD(123abc)]  :   [WORD(123abc)]     [Pass]
+    {T3} [hel.lo]       =>  WORD(hel)       :   same as expected   [Pass]
+                            PUNCTUATION(.)
+                            WORD(lo)
+
+Number:
+    {T1}    [1234]  =>  [NUMBER(1234)]  :   [NUMBER(1234)]          [Pass]
+    {T2}    [45.6]  =>  [NUMBER(45.6)]  :   [NUMBER(45.6)]          [Pass]
+    {T3}    [1234]  =>  [NUMBER(5) 
+                         PUNCTUATION(.)]  : same as expected        [Pass]
+    {T4}    [+34]   =>  [NUMBER(+34)]     : [+NUMBER(34)]           [Fail] *fixed
+    {T5}    [+34.5] =>  [NUMBER(+34.5)]   : [+NUMBER(34.5)]         [Fail] *fixed
+    {T6}    [-34.5] =>  [NUMBER(-34.5)]   : [PUNCTUATION(-)         [Fail] *fixed
+                                             NUMBER(34.5)]
+    {T7}    [-65]   =>  [NUMBER(-65)]     : PUNCTUATION(-)          [Fail] *fixed
+                                            NUMBER(65)]
+
+Apostrophized:
+    {T1}  [John's]        => [APOSTROPHIZED(John's)] : [APOSTROPHIZED(John's)]              [Pass]
+    {T2}  [test'this'out] => [APOSTROPHIZED(test'this'out)] : [APOSTROPHIZED(test'this'out)][Pass]
+    {T3}  [test-this's]   => [APOSTROPHIZED(test-this's)] : [HYPHENATED(test-this) :        [Fail]
+                                                            PUNCTUATION(')
+                                                            WORD(s)]   
+    {T4}  [''']           =>  [PUNCTUATION(')       :   same as expected                    [Pass]
+                               PUNCTUATION(')
+                               PUNCTUATION(')]                                                          
+Hyphenated:
+    {T1} [father-in-law]    => [HYPHENATED(father-in-law)] : [HYPHENATED(father-in-law)]    [Pass]
+    {T2} [---]              => [PUNCTUATION(-) :             same as expected               [Pass]
+                                PUNCTUATION(-)
+                                PUNCTUATION(-)]   
+    {T3} [data-base-]       =>  [HYPHENATED(data-base) :     same as expected               [Pass]
+                                 PUNCTUATION(-)]
+
+Filtering:
+
+-------------
+T1 - PASS
+------------
+<doc>
+<p>
+This should output
+</p>
+
+<subject>
+<p>
+This should not output
+</p>
+</doc>
+
+Output:
+
+OPEN-DOC
+OPEN-P
+WORD(This)
+WORD(should)
+WORD(output)
+CLOSE-P
+CLOSE-DOC
+
+-------------
+T2 - PASS
+-------------
+
+<SUBJECT>
+
+<TEXT>
+
+<P>
+
+THIS WILL GET DISPLAYED
+
+</P>
+
+</TEXT>
+
+<P>
+THIS WON'T GET DISPLAYED
+
+</P>
+
+</SUBJECT>
+
+Output:
+OPEN-TEXT
+OPEN-P
+WORD(THIS)
+WORD(WILL)
+WORD(GET)
+WORD(DISPLAYED)
+CLOSE-P
+CLOSE-TEXT
+
+-----------
+T3 - PASS
+-----------
+<doc>
+
+<p>
+hello
+</p>
+
+<subject>
+</doc>
+
+Output:
+OPEN-DOC
+OPEN-P
+WORD(hello)
+CLOSE-P
+CLOSE-DOC
 
 
-This program was tested in chunks.
+OPEN-TAG(s) which were unmatched: 
+***************************************
+SUBJECT 
 
-1) Regular expressions.
-    * As the program was being built I would test the tokens created in the *.l file for correctness. I started by writing the embedded text tokens (WORD, NUMBER, APOSTROPHIZED, HYPHENATED, PUNCTUATION).
-2) util.cpp
-    each conditional...
-3) removing one irrelevant close tag..caused output to halt. want it to continue to filter.
-4) each case in checklist
-5) filtering down the lisr
+Errors:
+
+---------
+T1 - Pass
+---------
+
+<doc>
+
+<p>
+hello
+</p>
+
+</SUBJECT> *
+</doc>
+
+Output:
+
+OPEN-DOC
+OPEN-P
+WORD(hello)
+CLOSE-P
+CLOSE-DOC
+
+
+OPEN-TAG(s) which were unmatched: 
+***************************************
+
+---------
+T2 - PASS
+---------
+<doc>
+
+<p>
+hello
+</p>
+
+</p>
+</doc>
+
+
+Output:
+
+OPEN-DOC
+OPEN-P
+WORD(hello)
+CLOSE-P
+error at line(7): no matching OPEN-TAG for </P>
+CLOSE-DOC
+
+
+OPEN-TAG(s) which were unmatched: 
+***************************************
+
+--------------
+T3 - PASS
+--------------
+
+<doc>
+
+<p>
+hello
+</p>
+
+<headline>
+<date>
+
+</p>
+</doc>
+
+Output:
+
+OPEN-DOC
+OPEN-P
+WORD(hello)
+CLOSE-P
+OPEN-HEADLINE
+OPEN-DATE
+error at line(10): no matching OPEN-TAG for </P>
+CLOSE-DOC
+
+
+OPEN-TAG(s) which were unmatched: 
+***************************************
+HEADLINE DATE 
+
+
+
+END TEST PLAN.
+

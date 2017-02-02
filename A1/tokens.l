@@ -27,9 +27,9 @@ sign                                    ("+"|"-")?
 open-tag                                ("<")[a-zA-z0-9=\" ]+(">")
 close-tag                               ("</"){1}[a-zA-z0-9 ]+(">"){1}
 word                                    ({digit}*{letter}+{digit}*)+
-number                                  (^{sign}{real}|^{sign}{digit}+|{digit}+|{real})
-apostrophized                           ({word}("'"){1})+{word}
-hyphenated                              ({word}("-"){1})+{word}
+number                                  ({sign}{real}|{sign}{digit}+|{digit}+|{real})
+apostrophized                           ([a-zA-z0-9]+("'"){1})+[a-zA-z0-9]+
+hyphenated                              ([a-zA-z0-9]+("-"){1})+[a-zA-z0-9]+
 punctuation                             [!@#$%{}\:.,;?></\^&`~*()_="'-]
 
 whitespace                              [ \t]+
@@ -48,7 +48,7 @@ newline                                 \n
                                                 
                                                 if(relevant && isOutputted)
                                                 {
-                                                    return OPENTAG;
+                                                   return OPENTAG;
                                                 }
                                             }
 {close-tag}                                 {
@@ -56,14 +56,14 @@ newline                                 \n
                                                 yytext = toUpperCase(yytext);
                                                 normalizedText = parseTag(yytext);
 
+                                                relevant = checkRelevancy(normalizedText);
+                                                isOutputted = toOutput();
+
                                                 /*Check that the closing tag and open tag match 
                                                 If they do, pop it off the stack. Else it is an error*/
                                                 if(!normalizedStack.value.empty() && normalizedStack.value.back().compare(normalizedText) == 0)
                                                 {
                                                     normalizedStack.value.pop_back(); // pop value off of the stack
-
-                                                    relevant = checkRelevancy(normalizedText);
-                                                    isOutputted = toOutput();
 
                                                     if(relevant && isOutputted)
                                                     {
