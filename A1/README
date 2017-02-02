@@ -23,14 +23,14 @@ REQUIREMENTS
 This program requires:
 
 	* flex
-	* gcc
+	* g++
 
 BUILD
 --------
 
 	1) 'cd' to the directory where the folder for this assignment exists.
 	2) type 'make' and the project should build.
-	3) 
+	3) run the program by typing './scanner < file' where file is the file that you want to be parsed
 
 TEST PLAN
 -----------

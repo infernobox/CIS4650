@@ -21,7 +21,7 @@ using namespace std;
 enum Filters { 
 
 	/* Book-keeping filters */
-	ERROR,
+	ENDFILE, ERROR,
 	/* Embedded Text */
 	WORD, NUMBER, APOSTROPHIZED, HYPHENATED, PUNCTUATION,
 
