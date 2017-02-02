@@ -3,7 +3,7 @@
  * File: globals.h
  * Class: CIS*4650 Compilers
  * Purpose: Global types and variables for the news article written in SGML
- * Date: January 2017
+ * Date: February 2nd, 2017
 */
 
 #ifndef _GLOBALS_H_
@@ -21,7 +21,7 @@ using namespace std;
 enum Filters { 
 
 	/* Book-keeping filters */
-	ENDFILE, ERROR,
+	ERROR,
 	/* Embedded Text */
 	WORD, NUMBER, APOSTROPHIZED, HYPHENATED, PUNCTUATION,
 

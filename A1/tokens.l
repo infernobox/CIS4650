@@ -3,7 +3,7 @@
  * File: tokens.l
  * Class: CIS*4650 Compilers
  * Purpose: Flex Specification for the news article written in SGML
- * Date: January 2017
+ * Date: February 2nd, 2017
 */
 
 %{
@@ -40,11 +40,12 @@ newline                                 \n
 {open-tag}                                  {
                                                 tokenValue.row = rowno;
                                                 yytext = toUpperCase(yytext);
-                                                normalizedText = parseTag(yytext);
-                                                relevant = checkRelevancy(normalizedText);
-                                                isOutputted = toOutput();
+                                                normalizedText = parseTag(yytext); // remove <, / and >
+                                                relevant = checkRelevancy(normalizedText); // check that it is a relevant tag
+                                                isOutputted = toOutput(); //check if the text should be outputted based on the stack contents
 
-                                                normalizedStack.value.push_back(normalizedText);
+                                                normalizedStack.value.push_back(normalizedText); // push the value onto the stack
+                                                
                                                 if(relevant && isOutputted)
                                                 {
                                                     return OPENTAG;
@@ -55,26 +56,33 @@ newline                                 \n
                                                 yytext = toUpperCase(yytext);
                                                 normalizedText = parseTag(yytext);
 
-                                                // Check that the closing tag and open tag match 
-                                                //If they do, pop it off the stack. Else it is an error
+                                                /*Check that the closing tag and open tag match 
+                                                If they do, pop it off the stack. Else it is an error*/
                                                 if(!normalizedStack.value.empty() && normalizedStack.value.back().compare(normalizedText) == 0)
                                                 {
-                                                    normalizedStack.value.pop_back();
+                                                    normalizedStack.value.pop_back(); // pop value off of the stack
 
                                                     relevant = checkRelevancy(normalizedText);
                                                     isOutputted = toOutput();
+
                                                     if(relevant && isOutputted)
                                                     {
                                                         tokenValue.value = normalizedText; 
                                                         return CLOSETAG;
                                                     }
                                                 }
-                                                else if(normalizedText.compare("DOC") == 0)
+                                                else if(normalizedText.compare("DOC") == 0) //always output the DOC tag
                                                 {
                                                     tokenValue.value = normalizedText;
+
+                                                    if(!normalizedStack.value.empty()) //making sure the stack is not empty before erasing
+                                                    {
+                                                        // erase so if any unmatched tags are present, the DOC one will not be printed
+                                                        normalizedStack.value.erase(normalizedStack.value.begin());
+                                                    }
                                                     return CLOSETAG;
                                                 }
-                                                else if(relevant && isOutputted)
+                                                else if(relevant && isOutputted) // a close tag with no matching opentag
                                                 {
                                                     tokenValue.value = yytext;
                                                     return ERROR;
@@ -83,6 +91,7 @@ newline                                 \n
 {word}                                      {  
                                                 tokenValue.row = rowno;
                                                 isOutputted = toOutput();
+
                                                 if(!normalizedStack.value.empty() && checkRelevancy(normalizedStack.value.back()) && isOutputted)
                                                 {
                                                     tokenValue.value = yytext;
@@ -92,6 +101,7 @@ newline                                 \n
 {number}                                    {   
                                                 tokenValue.row = rowno;
                                                 isOutputted = toOutput();
+
                                                 if(!normalizedStack.value.empty() && checkRelevancy(normalizedStack.value.back()) && isOutputted)
                                                 {
                                                     tokenValue.value = yytext;
@@ -102,6 +112,7 @@ newline                                 \n
 {apostrophized}                             {   
                                                 tokenValue.row = rowno;
                                                 isOutputted = toOutput();
+
                                                 if(!normalizedStack.value.empty() && checkRelevancy(normalizedStack.value.back()) && isOutputted)
                                                 {
                                                     tokenValue.value = yytext;
@@ -111,6 +122,7 @@ newline                                 \n
 {hyphenated}                                {  
                                                 tokenValue.row = rowno; 
                                                 isOutputted = toOutput();
+
                                                 if(!normalizedStack.value.empty() && checkRelevancy(normalizedStack.value.back()) && isOutputted)
                                                 {
                                                     tokenValue.value = yytext;
@@ -120,17 +132,21 @@ newline                                 \n
 {punctuation}                               {  
                                                 tokenValue.row = rowno;
                                                 isOutputted = toOutput(); 
+
                                                 if(!normalizedStack.value.empty() && checkRelevancy(normalizedStack.value.back()) && isOutputted)
                                                 {
                                                     tokenValue.value = yytext;
                                                     return PUNCTUATION;
                                                 }
                                             }
-{whitespace}                                {   /* skip whitespace*/ }
-{newline}                                   {   rowno++; }
+{whitespace}                                {   /* skip whitespace*/    }
+{newline}                                   {   rowno++;    }
 
 %%
 
+/* Function given by Fei Song
+    Allows output to be casted to the type of filters declared in globals.h
+*/
 enum Filters getToken(void) {
     return (enum Filters)yylex();
 }
@@ -141,11 +157,9 @@ enum Filters getToken(void) {
 */
 bool checkRelevancy(string token) {
 
-    //cout << "checkRelevancy" << token << endl;
-
     for(int i = 0; i < relevantTags.size(); ++i)
     {
-        if(token.compare(relevantTags.at(i)) == 0)
+        if(token.compare(relevantTags.at(i)) == 0) // if the tag in in the array (declared at top of file)
         {
             return true;
         }
@@ -159,6 +173,7 @@ bool checkRelevancy(string token) {
     Else returns true
 */
 bool toOutput() {
+
     vector<string>::iterator it;
     bool found = false;
 
@@ -191,6 +206,7 @@ bool toOutput() {
 char * toUpperCase(char * str) {
 
     int i = 0;
+
     while(str[i])
     {
         str[i] = toupper(str[i]);
@@ -203,6 +219,8 @@ char * toUpperCase(char * str) {
 /* Parses the OPEN-TAG and CLOSE-TAG to remove th '<', '>' and '/'
     Allows the normalized text to be extracted
     Return the string containing the normalized text
+
+    currently does not account for tags with attributes such as <text align="left">
 */
 string parseTag(char * tag) {
 
@@ -221,21 +239,3 @@ string parseTag(char * tag) {
 
     return normalized;
 }
-
-/*main(int argc, char const *argv[]) {
-
-    FILE * f;
-    char * buffer[1024];
-
-    f = fopen(argv[1], "r");
-
-        
-    if(argc == 2 && (f = fopen(argv[1], "r")))
-    {
-        yyin = f;
-    }
-
-    yylex();
-
-    return 0;
-}*/

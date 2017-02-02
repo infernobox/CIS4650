@@ -3,7 +3,7 @@
  * File: util.cpp
  * Class: CIS*4650 Compilers
  * Purpose: Utiliy functions for the SGML 
- * Date: January 2017
+ * Date: February, 2nd 2017
 */
 
 #include "globals.h"
@@ -17,29 +17,28 @@ void printToken( FILE * outfile, enum Filters token, struct GlobalStack &globalS
 	switch(token) 
 	{
 		case ERROR:
-			//cout << "error: no matching OPEN-TAG for " << tokenStruct.value  << " at lineno " << rowno << endl;
-			fprintf(stderr, "%s %d %s\n", "error, line ", rowno, "no matching OPEN-TAG");
+			fprintf(stderr, "error at line(%d): no matching OPEN-TAG for %s\n", rowno, tokenStruct.value.c_str());
 			break;
 		case OPENTAG:
-			cout << "OPEN-" << globalStack.value.back().c_str() << endl;
+			fprintf(outfile, "OPEN-%s\n", globalStack.value.back().c_str());
 			break;
 		case CLOSETAG:
-			cout << "CLOSE-" << tokenStruct.value << endl;
+			fprintf(outfile, "CLOSE-%s\n", tokenStruct.value.c_str());
 			break;
 		case WORD:
-			cout << "WORD(" << tokenStruct.value << ")" << endl;
+			fprintf(outfile, "WORD(%s)\n", tokenStruct.value.c_str());
 			break;
 		case NUMBER:
-			cout << "NUMBER(" << tokenStruct.value << ")" << endl;
+			fprintf(outfile, "NUMBER(%s)\n", tokenStruct.value.c_str());
 			break;
 		case APOSTROPHIZED:
-			cout << "APOSTROPHIZED(" << tokenStruct.value << ")" << endl;
+			fprintf(outfile, "APOSTROPHIZED(%s)\n", tokenStruct.value.c_str());
 			break;
 		case HYPHENATED:
-			cout << "HYPHENATED(" << tokenStruct.value << ")" << endl;
+			fprintf(outfile, "HYPHENATED(%s)\n", tokenStruct.value.c_str());
 			break;
 		case PUNCTUATION:
-			cout << "PUNCTUATION(" << tokenStruct.value << ")" << endl;
+			fprintf(outfile, "PUNCTUATION(%s)\n", tokenStruct.value.c_str());
 			break;
 	}
 }
@@ -48,11 +47,11 @@ void displayUnmatched(struct GlobalStack &globalStack) {
 
 	vector<string>::iterator it;
 
-	cout << "Unmatched open-tags: " << endl;
+	cout << "OPEN-TAG(s) which were unmatched: " << endl;
 
 	for(it = globalStack.value.begin(); it != globalStack.value.end(); ++it)
 	{
-		cout << *it << endl;
+		cout << *it << " ";
 	}
 }
 

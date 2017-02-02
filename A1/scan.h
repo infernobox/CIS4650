@@ -3,7 +3,7 @@
  * File: scan.h
  * Class: CIS*4650 Compilers
  * Purpose: The interface function for the SGML specification.
- * Date: January 2017
+ * Date: February 2nd, 2017
 */
 
 #ifndef _SCAN_H_
