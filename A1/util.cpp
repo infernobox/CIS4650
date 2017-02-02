@@ -12,15 +12,16 @@
 
 using namespace std;
 
-void printToken( FILE * f, enum Filters token, struct GlobalStack &globalStack, struct TokenStruct &tokenStruct) {
+void printToken( FILE * outfile, enum Filters token, struct GlobalStack &globalStack, struct TokenStruct &tokenStruct) {
 
 	switch(token) 
 	{
 		case ERROR:
-			cout << "close tag does not match open tag " << tokenStruct.value << endl;
+			//cout << "error: no matching OPEN-TAG for " << tokenStruct.value  << " at lineno " << rowno << endl;
+			fprintf(stderr, "%s %d %s\n", "error, line ", rowno, "no matching OPEN-TAG");
 			break;
 		case OPENTAG:
-			cout << "OPEN-" << globalStack.value.back() << endl;
+			cout << "OPEN-" << globalStack.value.back().c_str() << endl;
 			break;
 		case CLOSETAG:
 			cout << "CLOSE-" << tokenStruct.value << endl;
@@ -40,6 +41,18 @@ void printToken( FILE * f, enum Filters token, struct GlobalStack &globalStack, 
 		case PUNCTUATION:
 			cout << "PUNCTUATION(" << tokenStruct.value << ")" << endl;
 			break;
+	}
+}
+
+void displayUnmatched(struct GlobalStack &globalStack) {
+
+	vector<string>::iterator it;
+
+	cout << "Unmatched open-tags: " << endl;
+
+	for(it = globalStack.value.begin(); it != globalStack.value.end(); ++it)
+	{
+		cout << *it << endl;
 	}
 }
 

@@ -28,5 +28,7 @@ int main(int argc, char const *argv[])
 	{
 		printToken(yyout, tokenType, normalizedStack, tokenValue);
 	}
+
+	displayUnmatched(normalizedStack);
 	return 0;
 }

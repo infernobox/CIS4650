@@ -58,6 +58,7 @@ ASSUMPTIONS
 * Relevant tags can wrap irrelevant tags, but irrelevant tags cannot wrap relevant tags.
 * If the global stack is empty, then nothing will be outputted since there are no tags.
 * If the closing tag is unmatched, then the previous valid input will be outputted and just an error will be outputted.
+	* If it is wrapped with irrelevant tags, the error will not be outputted.
 
 LIMITATIONS
 ------------

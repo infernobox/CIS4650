@@ -13,7 +13,6 @@
     #include "scan.h"
 
     string normalizedText;
-    //vector<string> normalizedStack;
     struct GlobalStack normalizedStack;
     struct TokenStruct tokenValue;
     bool relevant = false;
@@ -31,101 +30,104 @@ word                                    ({digit}*{letter}+{digit}*)+
 number                                  (^{sign}{real}|^{sign}{digit}+|{digit}+|{real})
 apostrophized                           ({word}("'"){1})+{word}
 hyphenated                              ({word}("-"){1})+{word}
-punctuation                             [!@#$%{}\:.,;?></^&`~*()_='-]
+punctuation                             [!@#$%{}\:.,;?></\^&`~*()_="'-]
 
-whitespace                              [ \t\n]+
+whitespace                              [ \t]+
+newline                                 \n
 
 %%
 
 {open-tag}                                  {
+                                                tokenValue.row = rowno;
                                                 yytext = toUpperCase(yytext);
                                                 normalizedText = parseTag(yytext);
                                                 relevant = checkRelevancy(normalizedText);
                                                 isOutputted = toOutput();
-                                                //cout << "Open " << isOutputted << endl;
+
                                                 normalizedStack.value.push_back(normalizedText);
                                                 if(relevant && isOutputted)
                                                 {
-                                                   // cout << "*OPEN-" << normalizedText << endl;
                                                     return OPENTAG;
                                                 }
-                                                cout << "\t\tNormalized " << normalizedText << endl;
                                             }
-{close-tag}                                 {   
+{close-tag}                                 {
+                                                tokenValue.row = rowno;
                                                 yytext = toUpperCase(yytext);
                                                 normalizedText = parseTag(yytext);
-                                                
+
                                                 // Check that the closing tag and open tag match 
                                                 //If they do, pop it off the stack. Else it is an error
                                                 if(!normalizedStack.value.empty() && normalizedStack.value.back().compare(normalizedText) == 0)
                                                 {
-                                                    cout << "Match found" << endl;
                                                     normalizedStack.value.pop_back();
 
                                                     relevant = checkRelevancy(normalizedText);
                                                     isOutputted = toOutput();
                                                     if(relevant && isOutputted)
                                                     {
-                                                        //cout << "*CLOSE-" << normalizedText << endl;
                                                         tokenValue.value = normalizedText; 
                                                         return CLOSETAG;
                                                     }
                                                 }
-                                                else
+                                                else if(normalizedText.compare("DOC") == 0)
                                                 {
-                                                    //cout << "no match (stderr)" << endl;
+                                                    tokenValue.value = normalizedText;
+                                                    return CLOSETAG;
+                                                }
+                                                else if(relevant && isOutputted)
+                                                {
                                                     tokenValue.value = yytext;
                                                     return ERROR;
                                                 } 
                                             }
 {word}                                      {  
-                                                //cout << normalizedStack.top() << " word" << endl;
+                                                tokenValue.row = rowno;
                                                 isOutputted = toOutput();
                                                 if(!normalizedStack.value.empty() && checkRelevancy(normalizedStack.value.back()) && isOutputted)
                                                 {
-                                                    //cout << "*WORD(" << yytext << ")" << endl;
                                                     tokenValue.value = yytext;
                                                     return WORD;
                                                 }
                                             }
 {number}                                    {   
+                                                tokenValue.row = rowno;
                                                 isOutputted = toOutput();
                                                 if(!normalizedStack.value.empty() && checkRelevancy(normalizedStack.value.back()) && isOutputted)
                                                 {
-                                                    //cout << "*NUMBER(" << yytext << ")" << endl;
                                                     tokenValue.value = yytext;
                                                     return NUMBER;
                                                 }
                                             }
                                             
 {apostrophized}                             {   
+                                                tokenValue.row = rowno;
                                                 isOutputted = toOutput();
                                                 if(!normalizedStack.value.empty() && checkRelevancy(normalizedStack.value.back()) && isOutputted)
                                                 {
-                                                    //cout << "*APOSTROPHIZED(" << yytext << ")" << endl;
                                                     tokenValue.value = yytext;
                                                     return APOSTROPHIZED;
                                                 }
                                             }
-{hyphenated}                                {   
+{hyphenated}                                {  
+                                                tokenValue.row = rowno; 
                                                 isOutputted = toOutput();
                                                 if(!normalizedStack.value.empty() && checkRelevancy(normalizedStack.value.back()) && isOutputted)
                                                 {
-                                                    //cout << "*HYPHENATED(" << yytext << ")" << endl;
                                                     tokenValue.value = yytext;
                                                     return HYPHENATED;
                                                 }
                                             }
 {punctuation}                               {  
+                                                tokenValue.row = rowno;
                                                 isOutputted = toOutput(); 
                                                 if(!normalizedStack.value.empty() && checkRelevancy(normalizedStack.value.back()) && isOutputted)
                                                 {
-                                                    //cout << "*PUNCTUATION(" << yytext << ")" << endl;
                                                     tokenValue.value = yytext;
                                                     return PUNCTUATION;
                                                 }
                                             }
 {whitespace}                                {   /* skip whitespace*/ }
+{newline}                                   {   rowno++; }
 
 %%
 
@@ -145,7 +147,6 @@ bool checkRelevancy(string token) {
     {
         if(token.compare(relevantTags.at(i)) == 0)
         {
-            //cout << "rele " << relevantTags.at(i) << endl;
             return true;
         }
     }
@@ -167,7 +168,6 @@ bool toOutput() {
 
         for(int i = 0; i < relevantTags.size(); ++i)
         {
-          //  cout << relevantTags.at(i) << " " << *it << endl;
             if(relevantTags.at(i).compare(*it) == 0)
             {
                 found = true;
@@ -181,34 +181,6 @@ bool toOutput() {
 
         }
     }
-
-    /*if(normalizedStack.empty())
-    {
-        return true;
-    }
-
-    for(it = normalizedStack.begin(); it != normalizedStack.end(); ++it)
-    {
-        found = false;
-
-        for(int i = 0; i < relevantTags.size(); ++i)
-        {
-          //  cout << relevantTags.at(i) << " " << *it << endl;
-            if(relevantTags.at(i).compare(*it) == 0)
-            {
-                found = true;
-                break;
-            }
-
-        }
-    }
-
-    if(!found)
-    {
-        return false;
-    }*/
-
-
 
     return true;
 }
@@ -246,8 +218,6 @@ string parseTag(char * tag) {
             normalized = normalized + *it;
         }
     }
-
-    //normalized = str.substr(1, str.length() - 2);
 
     return normalized;
 }

@@ -17,5 +17,6 @@ bool checkRelevancy(string token);
 char * toUpperCase(char * str);
 string parseTag(char * tag);
 bool toOutput();
+void displayUnmatched(struct GlobalStack &globalStack);
 
 #endif
