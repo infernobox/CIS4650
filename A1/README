@@ -2,17 +2,33 @@ CONTENTS OF THIS FILE
 ----------------------
 
 * Introduction
-
+* Version Control
+* Requirements
+* Build & Run
+* Assumptions
+* Limitations
+* Test Plan
 
 INTRODUCTION
 -------------
 
 This FLEX parser parses a a file written in SGML and outputs the tags of relevancy and its' embedded contents. This progam uses a global stack and a scanner in order to perform this.
 
+The programs takes in a file which contains SGML formatted text and parses it according to its tags. 
+
+Relevant tags include <DOC>, <P>, <TEXT>, <DATE>, <DOCNO>, <LENGTH>, <HEADLINE> and its corresponding closing tags </DOC>, </P>, </TEXT>, <DATE>, </DOCNO>, </LENGTH> and </HEADLINE>. 
+
+Irrelevant tags such as <SUBJECT>, <DOCID>, <BYLINE> and anything else not included in the relevant tag list.
+
+Any embedded text between relevant tags are outputted to stdout.
+Any embedded text between irrelevant tags are ignored.
+
+These rules also apply to nested structures and will be filtered accordingly.
+
 VERSION CONTROL
 ----------------
 
-* I used GitHub for my version control. 
+I used GitHub for my version control. 
 GitHub Name: assenavmai
 
 NOTE: The CIS4650 repository is private.
@@ -25,25 +41,12 @@ This program requires:
     * flex
     * g++
 
-BUILD
+BUILD & RUN
 --------
 
     1) 'cd' to the directory where the folder for this assignment exists.
     2) type 'make' and the project should build.
     3) run the program by typing './scanner < file' where file is the file that you want to be parsed
-
-TEST PLAN
------------
-
-This program was tested in chunks.
-
-1) Regular expressions.
-    * As the program was being built I would test the tokens created in the *.l file for correctness. I started by writing the embedded text tokens (WORD, NUMBER, APOSTROPHIZED, HYPHENATED, PUNCTUATION).
-2) util.cpp
-    each conditional...
-3) removing one irrelevant close tag..caused output to halt. want it to continue to filter.
-4) each case in checklist
-5) filtering down the lisr
 
 
 ASSUMPTIONS 
@@ -60,9 +63,23 @@ ASSUMPTIONS
 * If the closing tag is unmatched, then the previous valid input will be outputted and just an error will be outputted.
     * If it is wrapped with irrelevant tags, the error will not be outputted.
 
+
 LIMITATIONS
 ------------
-* Parentheses and brackets are not counted as punctuation.
-* <<DOC>> or anything with punctuation before the < of a tag, everything will be looked at as PUNCTUATION and WORD.
 * Apostrophized cannot be combined with hyphens.
 * Tags with attributes are not parsed.
+
+TEST PLAN
+-----------
+
+
+
+This program was tested in chunks.
+
+1) Regular expressions.
+    * As the program was being built I would test the tokens created in the *.l file for correctness. I started by writing the embedded text tokens (WORD, NUMBER, APOSTROPHIZED, HYPHENATED, PUNCTUATION).
+2) util.cpp
+    each conditional...
+3) removing one irrelevant close tag..caused output to halt. want it to continue to filter.
+4) each case in checklist
+5) filtering down the lisr
