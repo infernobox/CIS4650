@@ -13,7 +13,9 @@
     #include "scan.h"
 
     string normalizedText;
-    vector<string> normalizedStack;
+    //vector<string> normalizedStack;
+    struct GlobalStack normalizedStack;
+    struct TokenStruct tokenValue;
     bool relevant = false;
     bool isOutputted = false;
     array<string, 7> relevantTags = { "DOC", "TEXT", "P", "DOCNO", "DATE", "HEADLINE", "LENGTH"};
@@ -40,73 +42,87 @@ whitespace                              [ \t\n]+
                                                 normalizedText = parseTag(yytext);
                                                 relevant = checkRelevancy(normalizedText);
                                                 isOutputted = toOutput();
-                                                cout << "Open " << isOutputted << endl;
-                                                normalizedStack.push_back(normalizedText);
+                                                //cout << "Open " << isOutputted << endl;
+                                                normalizedStack.value.push_back(normalizedText);
                                                 if(relevant && isOutputted)
                                                 {
-                                                    cout << "*OPEN-" << normalizedText << endl;
-                                                    //return OPENTAG;
+                                                   // cout << "*OPEN-" << normalizedText << endl;
+                                                    return OPENTAG;
                                                 }
                                                 cout << "\t\tNormalized " << normalizedText << endl;
                                             }
 {close-tag}                                 {   
-                                                cout << "\t\t\t\tclose tag" << endl;
                                                 yytext = toUpperCase(yytext);
-                                                cout << "\t\t\t\tparsetag" << endl;
                                                 normalizedText = parseTag(yytext);
-                                                cout << "pls" << endl;
-                                                //cout <<  "close " << normalizedText << " " << normalizedStack.back() << endl;
+                                                
                                                 // Check that the closing tag and open tag match 
                                                 //If they do, pop it off the stack. Else it is an error
-                                                if(!normalizedStack.empty() && normalizedStack.back().compare(normalizedText) == 0)
+                                                if(!normalizedStack.value.empty() && normalizedStack.value.back().compare(normalizedText) == 0)
                                                 {
                                                     cout << "Match found" << endl;
-                                                    normalizedStack.pop_back();
+                                                    normalizedStack.value.pop_back();
 
                                                     relevant = checkRelevancy(normalizedText);
                                                     isOutputted = toOutput();
                                                     if(relevant && isOutputted)
                                                     {
-                                                        cout << "*CLOSE-" << normalizedText << endl; 
+                                                        //cout << "*CLOSE-" << normalizedText << endl;
+                                                        tokenValue.value = normalizedText; 
+                                                        return CLOSETAG;
                                                     }
                                                 }
-                                               
+                                                else
+                                                {
+                                                    //cout << "no match (stderr)" << endl;
+                                                    tokenValue.value = yytext;
+                                                    return ERROR;
+                                                } 
                                             }
 {word}                                      {  
                                                 //cout << normalizedStack.top() << " word" << endl;
                                                 isOutputted = toOutput();
-                                                if(!normalizedStack.empty() && checkRelevancy(normalizedStack.back()) && isOutputted)
+                                                if(!normalizedStack.value.empty() && checkRelevancy(normalizedStack.value.back()) && isOutputted)
                                                 {
-                                                    cout << "*WORD(" << yytext << ")" << endl;
+                                                    //cout << "*WORD(" << yytext << ")" << endl;
+                                                    tokenValue.value = yytext;
+                                                    return WORD;
                                                 }
                                             }
 {number}                                    {   
                                                 isOutputted = toOutput();
-                                                if(!normalizedStack.empty() && checkRelevancy(normalizedStack.back()) && isOutputted)
+                                                if(!normalizedStack.value.empty() && checkRelevancy(normalizedStack.value.back()) && isOutputted)
                                                 {
-                                                    cout << "*NUMBER(" << yytext << ")" << endl;
+                                                    //cout << "*NUMBER(" << yytext << ")" << endl;
+                                                    tokenValue.value = yytext;
+                                                    return NUMBER;
                                                 }
                                             }
                                             
 {apostrophized}                             {   
                                                 isOutputted = toOutput();
-                                                if(!normalizedStack.empty() && checkRelevancy(normalizedStack.back()) && isOutputted)
+                                                if(!normalizedStack.value.empty() && checkRelevancy(normalizedStack.value.back()) && isOutputted)
                                                 {
-                                                    cout << "*APOSTROPHIZED(" << yytext << ")" << endl;
+                                                    //cout << "*APOSTROPHIZED(" << yytext << ")" << endl;
+                                                    tokenValue.value = yytext;
+                                                    return APOSTROPHIZED;
                                                 }
                                             }
 {hyphenated}                                {   
                                                 isOutputted = toOutput();
-                                                if(!normalizedStack.empty() && checkRelevancy(normalizedStack.back()) && isOutputted)
+                                                if(!normalizedStack.value.empty() && checkRelevancy(normalizedStack.value.back()) && isOutputted)
                                                 {
-                                                    cout << "*HYPHENATED(" << yytext << ")" << endl;
+                                                    //cout << "*HYPHENATED(" << yytext << ")" << endl;
+                                                    tokenValue.value = yytext;
+                                                    return HYPHENATED;
                                                 }
                                             }
 {punctuation}                               {  
                                                 isOutputted = toOutput(); 
-                                                if(!normalizedStack.empty() && checkRelevancy(normalizedStack.back()) && isOutputted)
+                                                if(!normalizedStack.value.empty() && checkRelevancy(normalizedStack.value.back()) && isOutputted)
                                                 {
-                                                    cout << "*PUNCTUATION(" << yytext << ")" << endl;
+                                                    //cout << "*PUNCTUATION(" << yytext << ")" << endl;
+                                                    tokenValue.value = yytext;
+                                                    return PUNCTUATION;
                                                 }
                                             }
 {whitespace}                                {   /* skip whitespace*/ }
@@ -145,7 +161,7 @@ bool toOutput() {
     vector<string>::iterator it;
     bool found = false;
 
-    for(it = normalizedStack.begin(); it != normalizedStack.end(); ++it)
+    for(it = normalizedStack.value.begin(); it != normalizedStack.value.end(); ++it)
     {
         found = false;
 
@@ -236,7 +252,7 @@ string parseTag(char * tag) {
     return normalized;
 }
 
-main(int argc, char const *argv[]) {
+/*main(int argc, char const *argv[]) {
 
     FILE * f;
     char * buffer[1024];
@@ -252,4 +268,4 @@ main(int argc, char const *argv[]) {
     yylex();
 
     return 0;
-}
+}*/

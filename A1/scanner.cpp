@@ -13,9 +13,10 @@
 int rowno = 1;
 extern FILE * yyin;
 extern FILE * yyout;
+extern struct GlobalStack normalizedStack;
+extern struct TokenStruct tokenValue;
 
-
-/*int main(int argc, char const *argv[])
+int main(int argc, char const *argv[])
 {
 	yyin = stdin;
 	yyout = stdout;
@@ -25,7 +26,7 @@ extern FILE * yyout;
 	// keep reading the file while there is tokens to read
 	while((tokenType = getToken()) != ENDFILE)
 	{
-		printToken(yyout, tokenType);
+		printToken(yyout, tokenType, normalizedStack, tokenValue);
 	}
 	return 0;
-}*/
+}

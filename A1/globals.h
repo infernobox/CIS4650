@@ -15,14 +15,13 @@ using namespace std;
 #include <string>
 #include <iostream>
 #include <cctype>
-#include <stack>
 #include <array>
 #include <vector>
 
 enum Filters { 
 
 	/* Book-keeping filters */
-	ENDFILE,
+	ENDFILE, ERROR,
 	/* Embedded Text */
 	WORD, NUMBER, APOSTROPHIZED, HYPHENATED, PUNCTUATION,
 
@@ -30,9 +29,14 @@ enum Filters {
 	OPENTAG, CLOSETAG
 };
 
-struct TokenStack {
+struct TokenStruct {
   string value;
   int row;
+};
+
+struct GlobalStack {
+
+	vector<string> value;
 };
 
 extern int rowno;     /* input file row number */

@@ -57,6 +57,7 @@ ASSUMPTIONS
 * Only case that needs to be checked for CLOSE-TAGS are that they do not have a corresponding open tag.
 * Relevant tags can wrap irrelevant tags, but irrelevant tags cannot wrap relevant tags.
 * If the global stack is empty, then nothing will be outputted since there are no tags.
+* If the closing tag is unmatched, then the previous valid input will be outputted and just an error will be outputted.
 
 LIMITATIONS
 ------------

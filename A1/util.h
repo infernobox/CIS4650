@@ -12,7 +12,7 @@
 #include "globals.h"
 
 //Prints the token and outputs it to a file
-void printToken( FILE *, enum Filters);
+void printToken( FILE *, enum Filters, struct GlobalStack &, struct TokenStruct &);
 bool checkRelevancy(string token);
 char * toUpperCase(char * str);
 string parseTag(char * tag);
