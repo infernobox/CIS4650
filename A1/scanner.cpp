@@ -18,17 +18,17 @@ extern struct TokenStruct tokenValue;
 
 int main(int argc, char const *argv[])
 {
-	yyin = stdin;
-	yyout = stdout;
+    yyin = stdin;
+    yyout = stdout;
 
-	enum Filters tokenType;
+    enum Filters tokenType;
 
-	// keep reading the file while there is tokens to read
-	while((tokenType = getToken()) != ENDFILE)
-	{
-		printToken(yyout, tokenType, normalizedStack, tokenValue);
-	}
+    // keep reading the file while there is tokens to read
+    while((tokenType = getToken()) != ENDFILE)
+    {
+        printToken(yyout, tokenType, normalizedStack, tokenValue);
+    }
 
-	displayUnmatched(normalizedStack);
-	return 0;
+    displayUnmatched(normalizedStack);
+    return 0;
 }

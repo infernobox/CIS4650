@@ -9,7 +9,7 @@
 #ifndef _SCAN_H_
 #define _SCAN_H_
 
-	//get the token that is being found while going through the scanner
-	enum Filters getToken(void);
+    //get the token that is being found while going through the scanner
+    enum Filters getToken(void);
 
 #endif

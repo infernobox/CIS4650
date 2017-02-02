@@ -20,13 +20,13 @@ using namespace std;
 
 enum Filters { 
 
-	/* Book-keeping filters */
-	ENDFILE, ERROR,
-	/* Embedded Text */
-	WORD, NUMBER, APOSTROPHIZED, HYPHENATED, PUNCTUATION,
+    /* Book-keeping filters */
+    ENDFILE, ERROR,
+    /* Embedded Text */
+    WORD, NUMBER, APOSTROPHIZED, HYPHENATED, PUNCTUATION,
 
-	/* Tag Types */
-	OPENTAG, CLOSETAG
+    /* Tag Types */
+    OPENTAG, CLOSETAG
 };
 
 struct TokenStruct {
@@ -36,7 +36,7 @@ struct TokenStruct {
 
 struct GlobalStack {
 
-	vector<string> value;
+    vector<string> value;
 };
 
 extern int rowno;     /* input file row number */

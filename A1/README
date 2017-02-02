@@ -22,15 +22,15 @@ REQUIREMENTS
 
 This program requires:
 
-	* flex
-	* g++
+    * flex
+    * g++
 
 BUILD
 --------
 
-	1) 'cd' to the directory where the folder for this assignment exists.
-	2) type 'make' and the project should build.
-	3) run the program by typing './scanner < file' where file is the file that you want to be parsed
+    1) 'cd' to the directory where the folder for this assignment exists.
+    2) type 'make' and the project should build.
+    3) run the program by typing './scanner < file' where file is the file that you want to be parsed
 
 TEST PLAN
 -----------
@@ -38,15 +38,15 @@ TEST PLAN
 This program was tested in chunks.
 
 1) Regular expressions.
-	* As the program was being built I would test the tokens created in the *.l file for correctness. I started by writing the embedded text tokens (WORD, NUMBER, APOSTROPHIZED, HYPHENATED, PUNCTUATION).
+    * As the program was being built I would test the tokens created in the *.l file for correctness. I started by writing the embedded text tokens (WORD, NUMBER, APOSTROPHIZED, HYPHENATED, PUNCTUATION).
 2) util.cpp
-	each conditional...
+    each conditional...
 3) removing one irrelevant close tag..caused output to halt. want it to continue to filter.
 4) each case in checklist
 5) filtering down the lisr
 
 
-ASSUMPTIONS	
+ASSUMPTIONS 
 -------------
 
 * For cases such as HYPHENATED and APOSTROPHIZED, if the token ends in "-" or "'", the trailing character will be treated as PUNCTUATION.
@@ -58,7 +58,7 @@ ASSUMPTIONS
 * Relevant tags can wrap irrelevant tags, but irrelevant tags cannot wrap relevant tags.
 * If the global stack is empty, then nothing will be outputted since there are no tags.
 * If the closing tag is unmatched, then the previous valid input will be outputted and just an error will be outputted.
-	* If it is wrapped with irrelevant tags, the error will not be outputted.
+    * If it is wrapped with irrelevant tags, the error will not be outputted.
 
 LIMITATIONS
 ------------
